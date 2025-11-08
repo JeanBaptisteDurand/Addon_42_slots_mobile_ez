@@ -83,4 +83,9 @@ Si tu veux qu’il s’exécute aussi ailleurs, ajuste le `@match`.
 
 ## TODO
 > verif protection pour les slots reserved
+> ajouter message derreur overlap sur le retour api 42 creation
 > en faire un vrai addon
+
+# Aller plus loin
+> Gerer le pc en plus du mobile
+> remplacer la page au complet
