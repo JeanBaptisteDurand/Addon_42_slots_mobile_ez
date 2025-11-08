@@ -2,6 +2,10 @@
 
 Addon mobile pour simplier les slots sur mobile (protection minimum 30 min et auto adjust sur les quart dheures)
 
+![Aperçu du projet](assets/demo.gif)
+
+[Quick demo on Youtube](https://youtube.com/shorts/8dFg-4t0dqQ) 
+
 ## 🔧 1) Pré-requis
 
 - **Android + Firefox for Android** (version récente) installé.  
