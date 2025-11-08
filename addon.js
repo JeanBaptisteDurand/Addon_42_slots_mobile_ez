@@ -92,6 +92,7 @@
 
     const begin_at=roundToQuarterISO(bVal), end_at=roundToQuarterISO(eVal);
     if (minutesBetween(begin_at,end_at)<30) return setMsg('Durée minimale 30 minutes.', true);
+    if (new Date(begin_at)>=new Date(end_at)) return setMsg('Erreur : début ≥ fin.',true);
 
     const form=new URLSearchParams();
     form.set('slot[user_id]', uid);
