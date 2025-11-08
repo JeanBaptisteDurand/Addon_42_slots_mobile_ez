@@ -1,113 +1,112 @@
-# 42 Slots Mobile Manager — README
+# 42 Slots — Extension Firefox Mobile
 
-Addon mobile pour simplier les slots sur mobile (protection minimum 30 min et auto adjust sur les quart dheures)
-
-![Aperçu du projet](assets/demo.gif)
-
-[Quick demo on Youtube](https://youtube.com/shorts/8dFg-4t0dqQ) 
-
-## 🔧 1) Pré-requis
-
-- **Android + Firefox for Android** (version récente) installé.  
-- Accès à la page **https://profile.intra.42.fr/slots** où tu es déjà connecté.  
-- Le **userscript** (le code du script `42 Slots Mobile Manager`) copié dans le presse-papier.  
-- Si ton Firefox ne propose pas **Tampermonkey**, prends **Violentmonkey** (même usage).  
-  Les deux sont disponibles sur le site des modules Firefox (AMO).
-
-> 💡 Si ta version de Firefox ne permet pas les extensions, installe **Firefox Nightly**  
-> ou utilise **Kiwi Browser** / **Bromite** (Android) qui supportent les extensions Chrome.
+**42 Slots** est une extension open-source pour **Firefox (mobile)** permettant aux étudiants de l’école 42 de **créer, afficher et supprimer leurs slots** directement depuis la page officielle de l’intra (`https://profile.intra.42.fr/slots`).  
+Elle a été conçue pour offrir une expérience fluide et mobile-friendly, sans avoir à naviguer dans l’interface complexe du site.
 
 ---
 
-## ⚙️ 2) Installer l’extension userscript (Tampermonkey / Violentmonkey)
+## 🚀 Fonctionnalités principales
 
-1. Ouvre **Firefox** sur ton mobile.  
-2. Va dans le menu (⋮) → **Add-ons** (ou tape `about:addons` dans la barre d’adresse).  
-3. Recherche **Tampermonkey** ou **Violentmonkey** et installe-la (**Add to Firefox**).  
-4. Une fois installée, tu devrais voir l’icône de l’extension dans le menu Add-ons.
+- **Interface intégrée** sur la page des slots 42.
+- **Création rapide** de slots avec vérification automatique des règles.
+- **Affichage clair** de tous tes slots récents.
+- **Suppression en un clic** des groupes de slots.
+- **Auto-détection du user_id** depuis les cookies.
+- **Mode sombre / clair** personnalisable et sauvegardé.
+- **Aucune donnée externe** : tout fonctionne localement dans le navigateur.
 
 ---
 
-## 📄 3) Ajouter le userscript
+## ⚙️ Installation
 
-1. Ouvre l’extension (Menu → Add-ons → Tampermonkey/Violentmonkey → **Ouvrir**).  
-2. Choisis **Create a new script** (ou **New → Script**).  
-3. Efface tout le contenu et **colle le code complet** du script *42 Slots Mobile Manager*.  
-4. Vérifie la ligne :
+1. Télécharge la dernière version signée sur :  
+   **[https://addons.mozilla.org/firefox/addon/42-slots/](https://addons.mozilla.org/firefox/addon/42-slots/)**
+
+2. Une fois installée, rends-toi sur :  
+   `https://profile.intra.42.fr/slots`
+
+3. Un panneau “Slots 42 — Création” s’affichera en bas de l’écran.
+
+---
+
+## 🧩 Utilisation
+
+1. Renseigne le **début** et la **fin** de ton slot.  
+2. Clique sur **Auto** pour détecter ton `user_id`.  
+3. Clique sur **Poster** → ton slot est créé.  
+4. Clique sur **Charger mes slots** pour actualiser la liste.  
+5. Supprime un slot via le bouton **Supprimer** (désactivé pour les slots réservés).
+
+---
+
+### ⚙️ Règles métier — Création et suppression de slots
+
+Ces règles respectent les contraintes de l’intra 42 et sont appliquées **avant tout envoi au serveur**, pour éviter les erreurs et rejets côté backend :
+
+#### 🧱 Création de slots
+- **Durée minimale de 30 minutes** : empêche la création de slots trop courts.  
+- **Début < Fin** : vérifie la cohérence temporelle avant soumission.  
+- **Règle des quarts d’heure** : les horaires de début et de fin sont automatiquement arrondis au quart d’heure supérieur (`00`, `15`, `30`, `45`).  
+- **Règle du décalage de 30 minutes** : un slot ne peut commencer qu’à partir de la *prochaine quinzaine strictement après maintenant + 30 minutes*.  
+  *Exemples :*  
+  - à 12h30 → début possible à 13h15  
+  - à 15h12 → début possible à 15h45  
+- **Protection anti-slot trop tôt** : si la date de début est avant la limite autorisée, le script bloque la création et affiche “Début trop tôt”.  
+
+#### 🗑️ Suppression de slots
+- **Protection contre la suppression des slots réservés** : le bouton “Supprimer” est caché ou désactivé si le slot a le statut `reserved`.  
+
+---
+
+### 🔮 TODO (à venir)
+- Protection contre les overlaps (check retour api).  
+- Validation de l’intervalle maximum autorisé par l’intra (check retour api).  
+- Vérifier la protection pour les slots reserved.
+- Gérer la version desktop en plus du mobile, en remplaçant complètement la page.
+
+### Little Warning Fix TODO for mozilla perfect score
+- Unsafe assignment to innerHTML content.js ligne 12 colonne 15 - - Unsafe assignment to innerHTML content.js ligne 356 colonne 7
+
+---
+
+## 🧱 Structure du projet
 ```
-@match https://profile.intra.42.fr/slots
+42_slots/
+├── manifest.json # Manifest MV3 + compatibilité Android
+├── content.js # Code principal de l’extension
+├── icons/
+│ ├── icon-48.png
+│ └── icon-128.png
+└── LICENSE # Licence MIT
 ```
-Si tu veux qu’il s’exécute aussi ailleurs, ajuste le `@match`.  
-5. Clique sur **Save**.  
-6. Donne un nom clair : **42 Slots Mobile Manager**.
 
 ---
 
-## 🚀 4) Autoriser / activer et tester
-
-1. Ouvre un nouvel onglet et va sur **https://profile.intra.42.fr/slots**.  
-2. L’extension injecte automatiquement le script (si le `@match` est correct).  
-3. Tu verras apparaître en bas de l’écran un **panneau flottant**.  
-
-### 🔍 Test rapide
-- Remplis **Begin / End** (`datetime-local`),  
-- Vérifie ou saisis ton **User ID** (auto-détecté via cookie),  
-- Clique **Poster**.  
-- Regarde le message de succès / erreur.  
-- Vérifie sur la page 42 que le slot est bien visible.
-
-> Pour le premier test, crée un **slot non critique** (facile à supprimer ensuite).
+## 🧮 Build manuel (.xpi)
+```
+source create_addon.sh
+```
 
 ---
 
-## 🧰 5) Si l’UI n’apparaît pas / problèmes courants
+## 📜 Licence
 
-- Vérifie que le script est **activé** pour le site (`@match` correct).  
-- Recharge la page (balaye vers le bas ou redémarre Firefox).  
-- Si le **CSRF** n’est pas trouvé, reconnecte-toi à `profile.intra.42.fr`.  
-- Si tu as une erreur `4xx` : ouvre la console (si dispo) ou consulte les logs Tampermonkey.  
-- Si Firefox bloque l’extension, installe **Violentmonkey** ou **Kiwi Browser**.
+Ce projet est distribué sous la **Licence MIT**.  
+Tu es libre de l’utiliser, le modifier, le redistribuer ou le forker, tant que la licence et les droits d’auteur d’origine sont conservés.
 
 ---
 
-## 🔐 6) Sécurité & bonnes pratiques
+## 💬 Support et contribution
 
-- Garde ce script **strictement privé** : il agit avec **ton compte 42**.  
-- Ne **commite** jamais le script ou tes **cookies**.  
-- Fais toujours un test manuel avant d’automatiser.  
-- Respecte les **règles de la plateforme** :  
-- slots ≥ 30 min,  
-- granularité de 15 min,  
-- maximum 2 semaines d’avance.  
+- **Site du module :** [https://addons.mozilla.org/firefox/addon/42-slots/](https://addons.mozilla.org/firefox/addon/42-slots/)
+- **Code source :** [https://github.com/JeanBaptisteDurand/Addon_42_slots_mobile_ez](https://github.com/JeanBaptisteDurand/Addon_42_slots_mobile_ez)
+- **Contact :** jedurand@student.42perpignan.fr
 
+Les contributions sont les bienvenues via *issues* et *pull requests*.
 
-## TODO
-> verif protection pour les slots reserved
-> ajouter message derreur overlap sur le retour api 42 creation
-> en faire un vrai addon
+---
 
-## TO FIX (small warning)
->Unsafe assignment to innerHTML content.js ligne 12 colonne 15
->Unsafe assignment to innerHTML content.js ligne 356 colonne 7
+## ❤️ Remerciements
 
-# Aller plus loin
-> Gerer le pc en plus du mobile
-> remplacer la page au complet
-
-# Resume
->Gère facilement tes créneaux “slots” sur l’intra 42 : création,
->suppression, affichage, auto-détection de ton ID et mode sombre
->intégré, pensé pour un usage mobile rapide et ergonomique.
-
-# Description
->42 Slots Mobile Manager est une extension Firefox pensée pour
->les étudiants de l’école 42.  
->Elle ajoute un panneau pratique sur la page des slots pour :
-• créer un slot en un clic (avec vérification des règles 42) ;  
-• afficher et supprimer ses slots existants ;  
-• détecter automatiquement son user_id ;  
-• basculer entre mode sombre et clair.  
-
->Aucune donnée n’est collectée ni transmise : tout s’exécute
->localement sur le site intra 42.  
->Compatible desktop et Firefox Android.
+Merci à la communauté **42** pour les retours et suggestions.  
+Ce projet a été créé pour simplifier la gestion des slots, surtout depuis mobile, tout en restant **100 % open source** et **sans collecte de données**.
