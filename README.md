@@ -86,6 +86,10 @@ Si tu veux qu’il s’exécute aussi ailleurs, ajuste le `@match`.
 > ajouter message derreur overlap sur le retour api 42 creation
 > en faire un vrai addon
 
+## TO FIX (small warning)
+>Unsafe assignment to innerHTML content.js ligne 12 colonne 15
+>Unsafe assignment to innerHTML content.js ligne 356 colonne 7
+
 # Aller plus loin
 > Gerer le pc en plus du mobile
 > remplacer la page au complet
