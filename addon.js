@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         42 Slots Mobile Manager v4 (single-call group delete)
+// @name         42 Slots Mobile Manager v5 (errors + reserved + dark mode)
 // @namespace    https://profile.intra.42.fr/
 // @match        https://profile.intra.42.fr/slots*
 // @run-at       document-idle
@@ -42,6 +42,22 @@
   }
   function ymd(date) { return date.toISOString().slice(0,10); }
 
+  // --- parse erreur serveur (json/texte/html) ---
+  async function parseError(res) {
+    const text = await res.text();
+    try {
+      const j = JSON.parse(text);
+      // Essayer les clés usuelles
+      const msg = j?.error || j?.message || (Array.isArray(j?.errors) ? j.errors.join(', ') : j?.errors);
+      if (msg) return `Erreur ${res.status} — ${msg}`;
+    } catch {}
+    // Extraire éventuel <title> d’une page HTML d’erreur
+    const m = text.match(/<title[^>]*>([^<]+)<\/title>/i);
+    if (m) return `Erreur ${res.status} — ${m[1]}`;
+    // fallback: tronquer le brut
+    return `Erreur ${res.status} — ${text.slice(0,200)}`;
+  }
+
   // ---------- UI ----------
   const panel = el('div');
   panel.style.cssText = `
@@ -49,7 +65,13 @@
     box-shadow:0 12px 32px rgba(0,0,0,.18);z-index:999999;font:14px system-ui,-apple-system,Segoe UI,Roboto;
   `;
   panel.innerHTML = `
-    <div style="font-weight:700;margin-bottom:8px">Slots 42 — Création</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div style="font-weight:700">Slots 42 — Création</div>
+      <div style="display:flex;gap:6px">
+        <button id="themeToggle" style="padding:6px 10px;border-radius:8px;border:1px solid #ddd;background:#fff">Light</button>
+        <button id="close" style="padding:6px 10px;border-radius:8px;border:1px solid #ddd;background:#fff">Fermer</button>
+      </div>
+    </div>
     <input id="b" type="datetime-local" step="900" style="width:100%;margin-bottom:8px;padding:8px;border-radius:8px;border:1px solid #ddd">
     <input id="e" type="datetime-local" step="900" style="width:100%;margin-bottom:8px;padding:8px;border-radius:8px;border:1px solid #ddd">
     <div style="display:flex;gap:8px;margin-bottom:8px">
@@ -58,7 +80,6 @@
     </div>
     <div style="display:flex;gap:8px;margin-bottom:6px">
       <button id="post" style="flex:1;padding:10px;border-radius:8px;background:#2d8cff;color:#fff;border:0">Poster</button>
-      <button id="close" style="padding:10px;border-radius:8px;border:1px solid #ddd;background:#fff">Fermer</button>
     </div>
 
     <hr style="margin:10px 0">
@@ -76,12 +97,48 @@
 
   const msg=$('#msg'), bInp=$('#b'), eInp=$('#e'), uidInp=$('#uid'),
         autoBtn=$('#auto'), postBtn=$('#post'), closeBtn=$('#close'),
-        loadAllBtn=$('#loadAll'), refreshBtn=$('#refresh'), listDiv=$('#list');
+        loadAllBtn=$('#loadAll'), refreshBtn=$('#refresh'), listDiv=$('#list'),
+        themeToggle=$('#themeToggle');
 
   const guess = getUserIdFromCookie(); if (guess) uidInp.value = guess;
   autoBtn.onclick = () => { const g=getUserIdFromCookie(); setMsg(g?'user_id auto détecté':'user_id non détecté', !g); if(g) uidInp.value=g; };
   closeBtn.onclick = () => panel.remove();
-  function setMsg(t, err=false){ msg.style.color = err?'red':'#333'; msg.textContent = t||''; }
+  function setMsg(t, err=false){ msg.style.color = err?'#ff6b6b':'var(--fg)'; msg.textContent = t||''; }
+
+  // ---------- THEME (dark par défaut) ----------
+  function applyTheme(mode){
+    // mode: 'dark' | 'light'
+    const dark = mode === 'dark';
+    panel.style.background = dark ? '#0f1115' : '#ffffff';
+    panel.style.color = dark ? '#e6e6e6' : '#111';
+    panel.style.boxShadow = dark ? '0 12px 32px rgba(0,0,0,.6)' : '0 12px 32px rgba(0,0,0,.18)';
+    panel.style.border = dark ? '1px solid #222630' : 'none';
+    // propager sur inputs/boutons/cadres
+    panel.querySelectorAll('input,button,hr,#list').forEach(n=>{
+      if(n.tagName==='HR'){
+        n.style.borderColor = dark ? '#2a2f3a' : '#eee';
+      }else if(n.id==='post'){ // bouton bleu
+        n.style.background = dark ? '#2d8cff' : '#2d8cff';
+        n.style.color = '#fff';
+        n.style.border = '0';
+      }else{
+        n.style.background = dark ? '#121620' : '#fff';
+        n.style.color = dark ? '#e6e6e6' : '#111';
+        n.style.border = `1px solid ${dark ? '#2a2f3a' : '#ddd'}`;
+      }
+    });
+    // couleurs globales pour setMsg
+    panel.style.setProperty('--fg', dark ? '#e6e6e6' : '#333');
+    themeToggle.textContent = dark ? 'Light' : 'Dark';
+  }
+  const savedTheme = localStorage.getItem('slotsTheme') || 'dark';
+  applyTheme(savedTheme);
+  themeToggle.onclick = () => {
+    const cur = localStorage.getItem('slotsTheme') || 'dark';
+    const next = cur === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('slotsTheme', next);
+    applyTheme(next);
+  };
 
   // ---------- création ----------
   postBtn.onclick = async () => {
@@ -92,7 +149,7 @@
 
     const begin_at=roundToQuarterISO(bVal), end_at=roundToQuarterISO(eVal);
     if (minutesBetween(begin_at,end_at)<30) return setMsg('Durée minimale 30 minutes.', true);
-    if (new Date(begin_at)>=new Date(end_at)) return setMsg('Erreur : début ≥ fin.',true);
+    if (new Date(begin_at)>=new Date(end_at)) return setMsg('Erreur : début ≥ fin.', true);
 
     const form=new URLSearchParams();
     form.set('slot[user_id]', uid);
@@ -105,8 +162,12 @@
         'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8',
         'X-CSRF-Token':csrf,'X-Requested-With':'XMLHttpRequest'
       },body:form.toString(),credentials:'same-origin'});
-      const txt=await res.text();
-      if(!res.ok) return setMsg(`Erreur ${res.status} — ${txt.slice(0,200)}`, true);
+
+      if(!res.ok){
+        const m = await parseError(res);
+        return setMsg(m, true);
+      }
+      // succès (afficher un message clair si le backend renvoie du JSON utile)
       setMsg('OK — slot créé'); await loadAll();
     }catch(e){ setMsg('Fetch error: '+e.message,true); }
   };
@@ -140,7 +201,7 @@
 
   function renderSlots(arr){
     listDiv.innerHTML='';
-    if(!Array.isArray(arr)||!arr.length){ listDiv.innerHTML='<div style="color:#666">Aucun slot.</div>'; return; }
+    if(!Array.isArray(arr)||!arr.length){ listDiv.innerHTML='<div style="color:#888">Aucun slot.</div>'; return; }
     for(const it of arr){
       let group=[];
       if(Array.isArray(it.ids)) group = it.ids.map(String);
@@ -148,26 +209,48 @@
       if(!group.length && it.id) group=[String(it.id)];
       const firstId = group[0];
 
-      const card=el('div'); card.style.cssText='border:1px solid #eee;border-radius:8px;padding:8px;margin-bottom:8px';
+      // Détection "reserved"
+      const isReserved =
+        (typeof it.status === 'string' && it.status.toLowerCase() === 'reserved') ||
+        /reserved/i.test(it.title || '');
+
+      const card=el('div');
+      card.style.cssText='border:1px solid #eee;border-radius:8px;padding:8px;margin-bottom:8px';
+      const badge = isReserved ? `<span style="font-size:12px;padding:2px 6px;border-radius:999px;border:1px solid #999;margin-left:8px;opacity:.8">reserved</span>` : '';
       card.innerHTML=`
-        <div style="font-weight:600">${it.title || 'Available'}</div>
+        <div style="font-weight:600;display:flex;align-items:center">
+          <span>${it.title || 'Available'}</span>${badge}
+        </div>
         <div>Début : ${toLocalString(it.start)}</div>
         <div>Fin&nbsp;&nbsp;: ${toLocalString(it.end)}</div>
         <div style="margin:6px 0;color:#666">Groupe: ${group.join(', ')}</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <button class="btn-del-group" data-first="${firstId}" data-ids="${group.join(',')}" style="padding:8px;border-radius:8px;border:1px solid #ddd;background:#fff">Supprimer</button>
-        </div>
+        <div class="btn-row" style="display:flex;gap:6px;flex-wrap:wrap"></div>
       `;
+      const row = card.querySelector('.btn-row');
+      if(!isReserved){
+        const delBtn = el('button', { className:'btn-del-group' });
+        delBtn.textContent = 'Supprimer';
+        delBtn.dataset.first = firstId;
+        delBtn.dataset.ids = group.join(',');
+        delBtn.style.cssText = 'padding:8px;border-radius:8px;border:1px solid #ddd;background:#fff';
+        delBtn.onclick = async (e)=>{
+          const first = e.currentTarget.getAttribute('data-first');
+          const ids   = e.currentTarget.getAttribute('data-ids');
+          try{
+            await deleteGroupSingleCall(first, ids);
+            await loadAll();
+          }catch(err){
+            setMsg(String(err.message||err), true);
+          }
+        };
+        row.appendChild(delBtn);
+      } else {
+        // rien : pas de bouton delete pour reserved
+      }
       listDiv.appendChild(card);
     }
-    listDiv.querySelectorAll('.btn-del-group').forEach(btn=>{
-      btn.onclick = async (e)=>{
-        const first = e.currentTarget.getAttribute('data-first');
-        const ids   = e.currentTarget.getAttribute('data-ids');
-        await deleteGroupSingleCall(first, ids);
-        await loadAll();
-      };
-    });
+    // ré-appliquer le thème aux cartes/boutons fraichement rendus
+    applyTheme(localStorage.getItem('slotsTheme') || 'dark');
   }
 
   // ---------- delete (UN SEUL CALL, comme l’UI 42) ----------
@@ -192,8 +275,11 @@
       body: body.toString(),
       credentials:'same-origin'
     });
-    const txt=await res.text();
-    if(!res.ok) throw new Error(`Delete group -> ${res.status}: ${txt.slice(0,160)}`);
+
+    if(!res.ok){
+      const m = await parseError(res);
+      throw new Error(m);
+    }
     setMsg('Groupe supprimé.');
   }
 
