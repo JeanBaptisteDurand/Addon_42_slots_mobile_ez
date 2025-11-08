@@ -93,3 +93,21 @@ Si tu veux qu’il s’exécute aussi ailleurs, ajuste le `@match`.
 # Aller plus loin
 > Gerer le pc en plus du mobile
 > remplacer la page au complet
+
+# Resume
+>Gère facilement tes créneaux “slots” sur l’intra 42 : création,
+>suppression, affichage, auto-détection de ton ID et mode sombre
+>intégré, pensé pour un usage mobile rapide et ergonomique.
+
+# Description
+>42 Slots Mobile Manager est une extension Firefox pensée pour
+>les étudiants de l’école 42.  
+>Elle ajoute un panneau pratique sur la page des slots pour :
+• créer un slot en un clic (avec vérification des règles 42) ;  
+• afficher et supprimer ses slots existants ;  
+• détecter automatiquement son user_id ;  
+• basculer entre mode sombre et clair.  
+
+>Aucune donnée n’est collectée ni transmise : tout s’exécute
+>localement sur le site intra 42.  
+>Compatible desktop et Firefox Android.
