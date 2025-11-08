@@ -66,7 +66,8 @@ Ces règles respectent les contraintes de l’intra 42 et sont appliquées **ava
 - Protection contre les overlaps (check retour api).  
 - Validation de l’intervalle maximum autorisé par l’intra (check retour api).  
 - Vérifier la protection pour les slots reserved.
-- Gérer la version desktop en plus du mobile, en remplaçant complètement la page.
+- Gérer la version desktop en plus du mobile.
+- injecter/remplacer la page slot mobile directement.
 
 ---
 
