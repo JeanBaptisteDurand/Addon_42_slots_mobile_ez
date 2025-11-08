@@ -56,34 +56,7 @@ Si tu veux qu’il s’exécute aussi ailleurs, ajuste le `@match`.
 
 ---
 
-## 🧩 5) Nouvelles fonctionnalités (par rapport à la version précédente)
-
-### ✅ Création de slot
-- Création simple : `Begin`, `End`, `User ID`  
-- Arrondi automatique à la granularité **15 min**  
-- Vérification de durée minimale (**30 min**)  
-- Auto-détection du `user_id` via cookie  
-
-### 🔄 Lecture / Liste
-- Charge tes slots sur une **période donnée** (`start` / `end`).  
-- Affiche chaque slot avec :  
-- **Début**, **Fin**, **ID**, **Groupe** (si plusieurs IDs liés).  
-- Affiche le nombre total de slots trouvés.  
-
-### ❌ Suppression
-- **Supprimer un slot** spécifique via son ID.  
-- **Supprimer un groupe complet** (plusieurs IDs liés).  
-- Confirmation visuelle du succès / échec.  
-- Rafraîchissement automatique de la liste après suppression.
-
-### 🪶 Interface mobile améliorée
-- Panneau flottant **responsive**, adapté aux écrans Android.  
-- Navigation fluide, boutons espacés et lisibles.  
-- Sauvegarde temporaire des dates de recherche (par défaut : aujourd’hui → +7 jours).  
-
----
-
-## 🧰 6) Si l’UI n’apparaît pas / problèmes courants
+## 🧰 5) Si l’UI n’apparaît pas / problèmes courants
 
 - Vérifie que le script est **activé** pour le site (`@match` correct).  
 - Recharge la page (balaye vers le bas ou redémarre Firefox).  
@@ -93,7 +66,7 @@ Si tu veux qu’il s’exécute aussi ailleurs, ajuste le `@match`.
 
 ---
 
-## 🔐 7) Sécurité & bonnes pratiques
+## 🔐 6) Sécurité & bonnes pratiques
 
 - Garde ce script **strictement privé** : il agit avec **ton compte 42**.  
 - Ne **commite** jamais le script ou tes **cookies**.  
@@ -102,16 +75,3 @@ Si tu veux qu’il s’exécute aussi ailleurs, ajuste le `@match`.
 - slots ≥ 30 min,  
 - granularité de 15 min,  
 - maximum 2 semaines d’avance.  
-
----
-
-## 💡 Bonus possibles (non inclus mais faciles à ajouter)
-
-- Mode **multi-création** (créer plusieurs slots sur plusieurs jours).  
-- Thème **sombre** automatique.  
-- Sauvegarde locale des paramètres (`user_id`, dates par défaut).  
-- Bouton “Supprimer tous les slots de la semaine”.
-
-Si tu veux une de ces options, il suffit de l’ajouter dans le script — demande-moi laquelle et je te génère la version correspondante.
-
----
