@@ -33,6 +33,14 @@
     const d = new Date(localDateStr); const ms = 15*60*1000;
     return new Date(Math.floor(d.getTime()/ms)*ms).toISOString();
   }
+  // retourne l'ISO du prochain quart d'heure STRICTEMENT après maintenant, +30 min
+  function nextQuarterPlus30ISO(now = new Date()) {
+    const ms15 = 15 * 60 * 1000;
+    const t = now.getTime();
+    const nextQuarter = Math.floor(t / ms15) * ms15 + ms15; // prochain quart > now
+    const minBegin = nextQuarter + 30 * 60 * 1000;
+    return new Date(minBegin).toISOString();
+  }
   function minutesBetween(aIso, bIso) {
     return Math.round((new Date(bIso) - new Date(aIso)) / 60000);
   }
@@ -150,6 +158,15 @@
     const begin_at=roundToQuarterISO(bVal), end_at=roundToQuarterISO(eVal);
     if (minutesBetween(begin_at,end_at)<30) return setMsg('Durée minimale 30 minutes.', true);
     if (new Date(begin_at)>=new Date(end_at)) return setMsg('Erreur : début ≥ fin.', true);
+
+    // règle: earliest = (prochaine quinzaine STRICTE) + 30 minutes
+    const earliestISO = nextQuarterPlus30ISO();
+    if (new Date(begin_at) < new Date(earliestISO)) {
+      return setMsg(
+        `Début trop tôt. Earliest: ${toLocalString(earliestISO)} (prochaine quinzaine + 30min)`,
+        true
+      );
+    }
 
     const form=new URLSearchParams();
     form.set('slot[user_id]', uid);
