@@ -3,6 +3,10 @@
 **42 Slots** est une extension open-source pour **Firefox (mobile)** permettant aux étudiants de l’école 42 de **créer, afficher et supprimer leurs slots** directement depuis la page officielle de l’intra (`https://profile.intra.42.fr/slots`).  
 Elle a été conçue pour offrir une expérience fluide et mobile-friendly, sans avoir à naviguer dans l’interface complexe du site.
 
+![Preview](./assets/demo.gif)
+
+[▶️ Voir la démo vidéo](https://youtube.com/shorts/8dFg-4t0dqQ)
+
 ---
 
 ## 🚀 Fonctionnalités principales
