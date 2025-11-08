@@ -75,3 +75,7 @@ Si tu veux qu’il s’exécute aussi ailleurs, ajuste le `@match`.
 - slots ≥ 30 min,  
 - granularité de 15 min,  
 - maximum 2 semaines d’avance.  
+
+
+## TODO
+Gerer les retours 42 autre que 200, lors de creation et deletion et afficher lerreur
