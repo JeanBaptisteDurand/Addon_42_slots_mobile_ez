@@ -1,10 +1,9 @@
 {
   "name": "42 Slots",
   "description": "Créer, lister et supprimer tes slots 42 sur mobile.",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "manifest_version": 3,
 
-  "permissions": ["storage"],
   "host_permissions": ["https://profile.intra.42.fr/*"],
 
   "content_scripts": [
@@ -23,7 +22,11 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "42slots@beorlor.dev",
-      "strict_min_version": "109.0"
+      "strict_min_version": "113.0",
+      "data_collection_permissions": {
+        "required": ["none"],
+        "optional": []
+      }
     },
     "gecko_android": {}
   }
