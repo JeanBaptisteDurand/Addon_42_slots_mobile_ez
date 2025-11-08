@@ -79,3 +79,4 @@ Si tu veux qu’il s’exécute aussi ailleurs, ajuste le `@match`.
 
 ## TODO
 Gerer les retours 42 autre que 200, lors de creation et deletion et afficher lerreur
+gerer les slots reserved (enlever le bouton delete ou gerer le cas)
