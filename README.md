@@ -64,9 +64,6 @@ Ces règles respectent les contraintes de l’intra 42 et sont appliquées **ava
 - Vérifier la protection pour les slots reserved.
 - Gérer la version desktop en plus du mobile, en remplaçant complètement la page.
 
-### Little Warning Fix TODO for mozilla perfect score
-- Unsafe assignment to innerHTML content.js ligne 12 colonne 15 - - Unsafe assignment to innerHTML content.js ligne 356 colonne 7
-
 ---
 
 ## 🧱 Structure du projet
