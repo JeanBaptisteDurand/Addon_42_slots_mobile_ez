@@ -1,7 +1,7 @@
 {
   "name": "42 Slots",
   "description": "Créer, lister et supprimer tes slots 42 sur mobile.",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "manifest_version": 3,
 
   "host_permissions": ["https://profile.intra.42.fr/*"],

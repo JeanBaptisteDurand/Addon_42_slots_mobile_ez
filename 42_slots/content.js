@@ -39,6 +39,16 @@
     return null;
   }
 
+  // for inner http status parsing
+  async function safeParseJson(res) {
+    try {
+      const text = await res.text();
+      try { return JSON.parse(text); } catch {}
+      return null;
+    } catch { return null; }
+  }
+
+
   function roundToQuarterISO(localDateStr) {
     const d = new Date(localDateStr);
     const ms = 15 * 60 * 1000;
@@ -238,6 +248,11 @@
       );
     }
 
+    const MAX_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+    if (new Date(end_at) - new Date(begin_at) > MAX_DAYS_MS) {
+      return setMsg('Erreur : un slot ne peut pas dépasser 7 jours.', true);
+    }
+
     const form = new URLSearchParams();
     form.set('slot[user_id]', uid);
     form.set('slot[begin_at]', begin_at);
@@ -261,6 +276,16 @@
         const m = await parseError(res);
         return setMsg(m, true);
       }
+
+      // overlap detection
+      let payload = await safeParseJson(res);
+      if (payload && (Number(payload.status) >= 400)) {
+        return setMsg(`Erreur ${payload.status} — ${String(payload.message || 'Conflit de slot').slice(0,300)}`, true);
+      }
+      if (payload && /overlap|overlapping/i.test(String(payload.message || ''))) {
+        return setMsg(String(payload.message), true);
+      }
+
       setMsg('OK — slot créé');
       await loadAll();
     } catch (e) {

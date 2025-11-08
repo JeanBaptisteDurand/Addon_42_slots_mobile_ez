@@ -56,6 +56,8 @@ Ces règles respectent les contraintes de l’intra 42 et sont appliquées **ava
   - à 12h30 → début possible à 13h15  
   - à 15h12 → début possible à 15h45  
 - **Protection anti-slot trop tôt** : si la date de début est avant la limite autorisée, le script bloque la création et affiche “Début trop tôt”.  
+- **Durée maximale de 7 jours** : un slot (ou groupe créé en une seule requête) ne peut pas dépasser **7 jours** ; au-delà, la création est bloquée avec un message d’erreur.  
+- **Protection contre les overlaps** : l’extension détecte et affiche clairement les conflits
 
 #### 🗑️ Suppression de slots
 - **Protection contre la suppression des slots réservés** : le bouton “Supprimer” est caché ou désactivé si le slot a le statut `reserved`.  
@@ -63,8 +65,6 @@ Ces règles respectent les contraintes de l’intra 42 et sont appliquées **ava
 ---
 
 ### 🔮 TODO (à venir)
-- Protection contre les overlaps (check retour api).  
-- Validation de l’intervalle maximum autorisé par l’intra (check retour api).  
 - Vérifier la protection pour les slots reserved.
 - Gérer la version desktop en plus du mobile.
 - injecter/remplacer la page slot mobile directement.
