@@ -1,5 +1,7 @@
 # 42 Slots Mobile Manager — README
 
+Addon mobile pour simplier les slots sur mobile (protection minimum 30 min et auto adjust sur les quart dheures)
+
 ## 🔧 1) Pré-requis
 
 - **Android + Firefox for Android** (version récente) installé.  
