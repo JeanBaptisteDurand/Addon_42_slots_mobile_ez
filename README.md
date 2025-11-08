@@ -1,5 +1,7 @@
 # 42 Slots Mobile Manager — README
 
+## This is a Beta
+
 Addon mobile pour simplier les slots sur mobile (protection minimum 30 min et auto adjust sur les quart dheures)
 
 ![Aperçu du projet](assets/demo.gif)
